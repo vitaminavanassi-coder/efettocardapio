@@ -24,9 +24,14 @@ type CartItem = MenuItem & {
 type MenuScreenProps = {
   categories: string[];
   items: MenuItem[];
+  submissionEnabled?: boolean;
 };
 
-export function MenuScreen({ categories, items }: MenuScreenProps) {
+export function MenuScreen({
+  categories,
+  items,
+  submissionEnabled = true,
+}: MenuScreenProps) {
   const [activeCategory, setActiveCategory] = useState(categories[0] ?? "");
   const [patientName, setPatientName] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -64,7 +69,12 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   async function submitCart() {
-    if (patientName.trim().length < 2 || totalItems === 0 || isSubmitting) {
+    if (
+      !submissionEnabled ||
+      patientName.trim().length < 2 ||
+      totalItems === 0 ||
+      isSubmitting
+    ) {
       return;
     }
 
@@ -124,6 +134,13 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
         <div className="mt-5 space-y-5">
           <PatientNameForm value={patientName} onChange={setPatientName} />
 
+          {!submissionEnabled ? (
+            <section className="rounded-[1.75rem] bg-coral px-4 py-3 text-sm leading-6 text-white shadow-soft">
+              O cardapio esta em modo de demonstracao. Configure as credenciais do
+              Supabase para liberar pedidos reais.
+            </section>
+          ) : null}
+
           {showSuccess ? <OrderSuccessState patientName={patientName} /> : null}
 
           <CategoryTabs
@@ -145,6 +162,7 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
         patientName={patientName}
         totalItems={totalItems}
         isSubmitting={isSubmitting}
+        submissionEnabled={submissionEnabled}
         onAdd={addItem}
         onRemove={removeItem}
         onSubmit={submitCart}

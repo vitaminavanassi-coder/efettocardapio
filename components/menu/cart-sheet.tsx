@@ -10,6 +10,7 @@ type CartSheetProps = {
   patientName: string;
   totalItems: number;
   isSubmitting: boolean;
+  submissionEnabled: boolean;
   onAdd: (item: MenuItem) => void;
   onRemove: (itemId: string) => void;
   onSubmit: () => void;
@@ -20,11 +21,13 @@ export function CartSheet({
   patientName,
   totalItems,
   isSubmitting,
+  submissionEnabled,
   onAdd,
   onRemove,
   onSubmit,
 }: CartSheetProps) {
-  const canSubmit = patientName.trim().length >= 2 && totalItems > 0;
+  const canSubmit =
+    submissionEnabled && patientName.trim().length >= 2 && totalItems > 0;
 
   return (
     <aside className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md px-4 pb-4 sm:px-5">
