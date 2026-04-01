@@ -1,12 +1,13 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { getRequiredEnv } from "@/lib/env";
+import type { Database } from "@/types/database";
 
-let adminClient: ReturnType<typeof createClient> | undefined;
+let adminClient: SupabaseClient<Database> | undefined;
 
 export function getSupabaseAdminClient() {
   if (!adminClient) {
-    adminClient = createClient(
+    adminClient = createClient<Database>(
       getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
       getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
       {
