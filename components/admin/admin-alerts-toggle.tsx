@@ -16,6 +16,8 @@ export function AdminAlertsToggle() {
   const [permission, setPermission] = useState<AlertsPermission>(getInitialPermission);
 
   async function requestPermission() {
+    window.dispatchEvent(new Event("admin-alerts-armed"));
+
     if (typeof Notification === "undefined") {
       return;
     }

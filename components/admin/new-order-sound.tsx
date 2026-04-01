@@ -9,6 +9,29 @@ type NewOrderSoundProps = {
 
 export function NewOrderSound({ tick, patientName }: NewOrderSoundProps) {
   const previousTick = useRef(tick);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    function armAlerts() {
+      const AudioContextClass = window.AudioContext;
+
+      if (!AudioContextClass) {
+        return;
+      }
+
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContextClass();
+      }
+
+      void audioContextRef.current.resume().catch(() => undefined);
+    }
+
+    window.addEventListener("admin-alerts-armed", armAlerts);
+
+    return () => {
+      window.removeEventListener("admin-alerts-armed", armAlerts);
+    };
+  }, []);
 
   useEffect(() => {
     if (tick <= previousTick.current) {
@@ -32,24 +55,26 @@ export function NewOrderSound({ tick, patientName }: NewOrderSoundProps) {
       return;
     }
 
-    const audioContext = new AudioContextClass();
+    const audioContext = audioContextRef.current ?? new AudioContextClass();
+    audioContextRef.current = audioContext;
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
+    void audioContext.resume().catch(() => undefined);
+
     oscillator.type = "triangle";
-    oscillator.frequency.value = 880;
-    gainNode.gain.value = 0.03;
+    oscillator.frequency.value = 920;
+    gainNode.gain.value = 0.06;
 
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
     oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.18);
+    oscillator.stop(audioContext.currentTime + 0.24);
 
     return () => {
       oscillator.disconnect();
       gainNode.disconnect();
-      void audioContext.close();
     };
   }, [patientName, tick]);
 

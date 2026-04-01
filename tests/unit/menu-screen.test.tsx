@@ -91,7 +91,5 @@ it("replaces the menu with a final success screen after submitting the order", a
   expect(screen.getByText(/pedido realizado com sucesso/i)).toBeInTheDocument();
   expect(screen.queryByText("Agua sem gas")).not.toBeInTheDocument();
   expect(screen.queryByRole("button", { name: /enviar pedido/i })).not.toBeInTheDocument();
-  expect(
-    screen.getByText(/para fazer outro pedido, abra o cardapio novamente/i),
-  ).toBeInTheDocument();
+  expect(screen.getByAltText(/efetto/i)).toBeInTheDocument();
 });

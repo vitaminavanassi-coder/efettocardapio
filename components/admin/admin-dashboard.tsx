@@ -20,6 +20,7 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
   const [soundTick, setSoundTick] = useState(0);
   const [latestAlertPatient, setLatestAlertPatient] = useState("");
   const liveOrdersRef = useRef(orders);
+  const knownOrderIdsRef = useRef(new Set(orders.map((order) => order.id)));
 
   useEffect(() => {
     setLiveOrders(orders);
@@ -38,19 +39,19 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
 
     const data = (await response.json()) as { orders: OrderListItem[] };
     const previousOrders = liveOrdersRef.current;
+    const knownOrderIds = knownOrderIdsRef.current;
 
     setLiveOrders(data.orders);
+    knownOrderIdsRef.current = new Set(data.orders.map((order) => order.id));
 
-    if (!playAlert) {
-      return;
-    }
-
-    const previousIds = new Set(previousOrders.map((order) => order.id));
     const latestNewOrder = data.orders.find(
-      (order) => order.status === "novo" && !previousIds.has(order.id),
+      (order) =>
+        order.status === "novo" &&
+        (!knownOrderIds.has(order.id) ||
+          !previousOrders.some((previousOrder) => previousOrder.id === order.id)),
     );
 
-    if (latestNewOrder) {
+    if (playAlert && latestNewOrder) {
       setLatestAlertPatient(latestNewOrder.patientName);
       setSoundTick((value) => value + 1);
     }
@@ -87,16 +88,16 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      void refreshOrders(false);
+      void refreshOrders(true);
     }, 1000);
 
     function handleFocus() {
-      void refreshOrders(false);
+      void refreshOrders(true);
     }
 
     function handleVisibilityChange() {
       if (document.visibilityState === "visible") {
-        void refreshOrders(false);
+        void refreshOrders(true);
       }
     }
 
@@ -164,7 +165,7 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
             />
           </div>
 
-          <details className="glass-shell rounded-[2.4rem] p-4" open={deliveredOrders.length > 0}>
+          <details className="glass-shell rounded-[2.4rem] p-4">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-2 py-1">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8f562f]">
