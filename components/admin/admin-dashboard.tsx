@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useRef, useState } from "react";
 
 import { AdminAlertsToggle } from "@/components/admin/admin-alerts-toggle";
 import { BrandLogo } from "@/components/brand/brand-logo";
@@ -29,7 +29,7 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
     liveOrdersRef.current = liveOrders;
   }, [liveOrders]);
 
-  async function refreshOrders(playAlert: boolean) {
+  const refreshOrders = useCallback(async (playAlert: boolean) => {
     const response = await fetch("/api/admin/orders", { cache: "no-store" });
 
     if (!response.ok) {
@@ -54,7 +54,7 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
       setLatestAlertPatient(latestNewOrder.patientName);
       setSoundTick((value) => value + 1);
     }
-  }
+  }, []);
 
   function markOrderAsDelivered(orderId: string) {
     startTransition(() => {
@@ -84,6 +84,31 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
       void refreshOrders(false);
     },
   });
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      void refreshOrders(false);
+    }, 1000);
+
+    function handleFocus() {
+      void refreshOrders(false);
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        void refreshOrders(false);
+      }
+    }
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [refreshOrders]);
 
   const newOrders = liveOrders.filter((order) => order.status === "novo");
   const deliveredOrders = liveOrders.filter((order) => order.status === "entregue");

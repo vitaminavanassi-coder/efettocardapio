@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, vi } from "vitest";
 
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
@@ -14,6 +14,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 beforeEach(() => {
+  vi.useFakeTimers();
   vi.stubGlobal("Notification", {
     permission: "default",
     requestPermission: vi.fn().mockResolvedValue("granted"),
@@ -21,6 +22,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -54,4 +56,35 @@ it("renders new orders, history and alerts action", () => {
   expect(screen.getByText(/^historico$/i)).toBeInTheDocument();
   expect(screen.getByRole("button", { name: /ativar alertas/i })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: /entregue/i })).toBeInTheDocument();
+});
+
+it("polls the admin orders feed and shows new orders without reloading the page", async () => {
+  const fetchMock = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      orders: [
+        {
+          id: "3",
+          patientName: "Carla",
+          status: "novo",
+          createdAt: "2026-04-01T10:05:00Z",
+          deliveredAt: null,
+          items: [],
+        },
+      ],
+    }),
+  });
+
+  vi.stubGlobal("fetch", fetchMock);
+
+  render(<AdminDashboard orders={[]} />);
+
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1200);
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+
+  expect(fetchMock).toHaveBeenCalledWith("/api/admin/orders", { cache: "no-store" });
+  expect(screen.getByText("Carla")).toBeInTheDocument();
 });

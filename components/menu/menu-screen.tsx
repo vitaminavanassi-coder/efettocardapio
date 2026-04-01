@@ -54,6 +54,10 @@ export function MenuScreen({
   }
 
   function addItem(item: MenuItem) {
+    if (showSuccess) {
+      setShowSuccess(false);
+    }
+
     setCart((currentCart) => {
       const existingItem = currentCart.find((entry) => entry.id === item.id);
 
@@ -154,6 +158,10 @@ export function MenuScreen({
     );
   }
 
+  if (showSuccess) {
+    return <OrderSuccessState patientName={patientName} />;
+  }
+
   return (
     <main className="min-h-screen pb-[17.25rem] text-ink">
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-4 sm:px-5">
@@ -169,8 +177,6 @@ export function MenuScreen({
               Configure o Supabase para liberar pedidos reais.
             </section>
           ) : null}
-
-          {showSuccess ? <OrderSuccessState patientName={patientName} /> : null}
 
           <CategoryTabs
             categories={categories}
