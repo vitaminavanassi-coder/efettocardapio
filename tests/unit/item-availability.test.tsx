@@ -17,4 +17,5 @@ it("disables add button when item is unavailable", () => {
   );
 
   expect(screen.getByRole("button", { name: /adicionar/i })).toBeDisabled();
+  expect(screen.queryByText("Bebida cremosa")).not.toBeInTheDocument();
 });

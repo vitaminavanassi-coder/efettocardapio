@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { CartSheet } from "@/components/menu/cart-sheet";
 import { CategoryTabs } from "@/components/menu/category-tabs";
 import { ItemCard } from "@/components/menu/item-card";
@@ -32,8 +33,9 @@ export function MenuScreen({
   items,
   submissionEnabled = true,
 }: MenuScreenProps) {
-  const [activeCategory, setActiveCategory] = useState(categories[0] ?? "");
+  const [activeCategory, setActiveCategory] = useState("");
   const [patientName, setPatientName] = useState("");
+  const [hasEnteredMenu, setHasEnteredMenu] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -41,6 +43,15 @@ export function MenuScreen({
   const visibleItems = activeCategory
     ? items.filter((item) => item.category === activeCategory)
     : items;
+  const hasPatientName = patientName.trim().length >= 2;
+
+  function continueToMenu() {
+    if (!hasPatientName) {
+      return;
+    }
+
+    setHasEnteredMenu(true);
+  }
 
   function addItem(item: MenuItem) {
     setCart((currentCart) => {
@@ -108,36 +119,54 @@ export function MenuScreen({
     }
   }
 
-  return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(232,122,93,0.18),_transparent_32%),linear-gradient(180deg,#fffdf8_0%,#f4efe5_100%)] pb-40 text-ink">
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-4 sm:px-5">
-        <header className="rounded-[2rem] bg-[linear-gradient(135deg,#102133,#1f4052)] p-5 text-white shadow-soft">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
-                Clinica Efetto
-              </p>
-              <h1 className="mt-3 text-3xl font-semibold leading-tight">
-                Cardapio digital para pedir em poucos toques
-              </h1>
+  if (!hasEnteredMenu) {
+    return (
+      <main
+        className="h-[100svh] overflow-hidden text-ink"
+        style={{
+          background:
+            "radial-gradient(circle at top, rgba(255,230,210,0.28), transparent 28%), linear-gradient(180deg, #ffbf8a 0%, #f79a5d 48%, #ea7931 100%)",
+        }}
+      >
+        <div className="mx-auto h-[100svh] w-full max-w-md px-6">
+          <div className="relative h-full">
+            <div className="absolute inset-x-0 top-[12svh]">
+              <div className="flex justify-center px-5">
+                <BrandLogo priority className="h-auto w-[14.25rem]" />
+              </div>
             </div>
-            <div className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-white/80">
-              QR
+
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
+              <div className="w-full p-1">
+                <div className="glass-panel mx-auto max-w-[21.5rem] rounded-[2.25rem] p-4.5">
+                  <PatientNameForm
+                    value={patientName}
+                    onChange={setPatientName}
+                    onSubmit={continueToMenu}
+                    submitDisabled={!hasPatientName}
+                  />
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </main>
+    );
+  }
 
-          <p className="mt-4 text-sm leading-6 text-white/75">
-            Informe seu nome, escolha os itens e envie para a recepcao.
-          </p>
+  return (
+    <main className="min-h-screen pb-[17.25rem] text-ink">
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-4 sm:px-5">
+        <header className="pb-3 pt-1">
+          <div className="flex justify-center">
+            <BrandLogo priority className="h-auto w-[15.25rem]" />
+          </div>
         </header>
 
-        <div className="mt-5 space-y-5">
-          <PatientNameForm value={patientName} onChange={setPatientName} />
-
+        <div className="space-y-4">
           {!submissionEnabled ? (
-            <section className="rounded-[1.75rem] bg-coral px-4 py-3 text-sm leading-6 text-white shadow-soft">
-              O cardapio esta em modo de demonstracao. Configure as credenciais do
-              Supabase para liberar pedidos reais.
+            <section className="glass-panel rounded-[2rem] px-4 py-3 text-sm leading-6 text-[#8c4d27]">
+              Configure o Supabase para liberar pedidos reais.
             </section>
           ) : null}
 
@@ -149,7 +178,7 @@ export function MenuScreen({
             onSelect={setActiveCategory}
           />
 
-          <section className="space-y-3">
+          <section className="space-y-3 pb-2">
             {visibleItems.map((item) => (
               <ItemCard key={item.id} item={item} onAdd={addItem} />
             ))}

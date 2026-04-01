@@ -1,11 +1,14 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { MenuScreen } from "@/components/menu/menu-screen";
 
-it("renders patient name field and menu item cards", () => {
+it("shows a dedicated entry screen before opening the menu", async () => {
+  const user = userEvent.setup();
+
   render(
     <MenuScreen
-      categories={["Bebidas"]}
+      categories={["Bebidas", "Cafes"]}
       items={[
         {
           id: "1",
@@ -15,10 +18,39 @@ it("renders patient name field and menu item cards", () => {
           description: "Agua gelada",
           available: true,
         },
+        {
+          id: "2",
+          slug: "cappuccino",
+          name: "Cappuccino",
+          category: "Cafes",
+          description: "Cafe cremoso",
+          available: true,
+        },
       ]}
     />,
   );
 
   expect(screen.getByLabelText(/nome do paciente/i)).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /continuar/i })).toBeDisabled();
+  expect(screen.queryByText("Agua sem gas")).not.toBeInTheDocument();
+  expect(screen.queryByText("Cappuccino")).not.toBeInTheDocument();
+
+  await user.type(screen.getByLabelText(/nome do paciente/i), "Ana");
+  expect(screen.getByRole("button", { name: /continuar/i })).toBeEnabled();
+
+  await user.click(screen.getByRole("button", { name: /continuar/i }));
+
   expect(screen.getByText("Agua sem gas")).toBeInTheDocument();
+  expect(screen.getByText("Cappuccino")).toBeInTheDocument();
+  expect(screen.queryByText("Agua gelada")).not.toBeInTheDocument();
+
+  await user.click(screen.getByRole("button", { name: "Cafes" }));
+
+  expect(screen.queryByText("Agua sem gas")).not.toBeInTheDocument();
+  expect(screen.getByText("Cappuccino")).toBeInTheDocument();
+
+  await user.click(screen.getByRole("button", { name: /todos/i }));
+
+  expect(screen.getByText("Agua sem gas")).toBeInTheDocument();
+  expect(screen.getByText("Cappuccino")).toBeInTheDocument();
 });

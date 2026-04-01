@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogo } from "@/components/brand/brand-logo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,35 +31,26 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
   const newOrders = orders.filter((order) => order.status === "novo").length;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(46,140,132,0.18),_transparent_28%),linear-gradient(180deg,#fffdf8_0%,#eef5f4_100%)] px-4 py-5 text-ink sm:px-6">
+    <main className="min-h-screen px-4 py-5 text-ink sm:px-6">
       <div className="mx-auto max-w-6xl">
-        <header className="rounded-[2rem] bg-[linear-gradient(135deg,#102133,#1b4853)] p-6 text-white shadow-soft">
+        <header className="glass-shell rounded-[3rem] p-6">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
-                Painel da recepcao
-              </p>
-              <h1 className="mt-3 text-3xl font-semibold">
-                Pedidos chegando em tempo real
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">
-                Acompanhe os pedidos novos, confirme as entregas e mantenha a operacao
-                fluindo sem perder nenhuma solicitacao.
-              </p>
+              <BrandLogo className="h-auto w-[14rem]" />
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <div className="rounded-[1.4rem] bg-white/10 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/65">Novos</p>
-                <p className="mt-2 text-3xl font-semibold">{newOrders}</p>
+              <div className="glass-panel rounded-[1.6rem] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Novos</p>
+                <p className="mt-2 text-3xl font-semibold text-[#8f562f]">{newOrders}</p>
               </div>
-              <div className="rounded-[1.4rem] bg-white/10 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/65">Total</p>
-                <p className="mt-2 text-3xl font-semibold">{orders.length}</p>
+              <div className="glass-panel rounded-[1.6rem] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Total</p>
+                <p className="mt-2 text-3xl font-semibold text-[#5a3a28]">{orders.length}</p>
               </div>
-              <div className="rounded-[1.4rem] bg-white/10 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/65">Tela</p>
-                <p className="mt-2 text-lg font-semibold">/admin</p>
+              <div className="glass-panel rounded-[1.6rem] px-4 py-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Tela</p>
+                <p className="mt-2 text-lg font-semibold text-[#5a3a28]">/admin</p>
               </div>
             </div>
           </div>
@@ -66,7 +58,7 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
           <div className="mt-5">
             <Link
               href="/admin/inventory"
-              className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white"
+              className="glass-button-secondary inline-flex rounded-full px-4 py-2.5 text-sm font-medium text-[#9a603a]"
             >
               Abrir mini estoque
             </Link>

@@ -9,8 +9,8 @@ type InventoryTableProps = {
 export function InventoryTable({ items }: InventoryTableProps) {
   if (items.length === 0) {
     return (
-      <div className="rounded-[2rem] bg-white p-6 shadow-soft ring-1 ring-black/5">
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-teal">
+      <div className="glass-panel rounded-[2rem] p-6">
+        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#b06a3c]">
           Sem dados de estoque
         </p>
         <p className="mt-3 text-sm leading-6 text-ink/65">
