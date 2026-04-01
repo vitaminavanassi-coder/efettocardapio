@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 
 type NewOrderSoundProps = {
   tick: number;
+  patientName?: string;
 };
 
-export function NewOrderSound({ tick }: NewOrderSoundProps) {
+export function NewOrderSound({ tick, patientName }: NewOrderSoundProps) {
   const previousTick = useRef(tick);
 
   useEffect(() => {
@@ -15,6 +16,15 @@ export function NewOrderSound({ tick }: NewOrderSoundProps) {
     }
 
     previousTick.current = tick;
+
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      const title = patientName ? `${patientName} fez um pedido` : "Novo pedido recebido";
+      const body = patientName
+        ? "A recepcao ja pode separar e entregar."
+        : "Abra o painel para visualizar os itens.";
+
+      void new Notification(title, { body });
+    }
 
     const AudioContextClass = window.AudioContext;
 
@@ -41,7 +51,7 @@ export function NewOrderSound({ tick }: NewOrderSoundProps) {
       gainNode.disconnect();
       void audioContext.close();
     };
-  }, [tick]);
+  }, [patientName, tick]);
 
   return null;
 }

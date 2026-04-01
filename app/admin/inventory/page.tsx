@@ -26,7 +26,7 @@ export default async function InventoryPage() {
 
             <Link
               href="/admin"
-              className="glass-button-secondary inline-flex rounded-full px-4 py-2.5 text-sm font-medium text-[#9a603a]"
+              className="glass-button-primary inline-flex rounded-full px-4 py-2.5 text-sm font-medium text-white"
             >
               Voltar para pedidos
             </Link>

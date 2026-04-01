@@ -1,9 +1,10 @@
 "use client";
 
+import { startTransition, useEffect, useRef, useState } from "react";
+
+import { AdminAlertsToggle } from "@/components/admin/admin-alerts-toggle";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { NewOrderSound } from "@/components/admin/new-order-sound";
 import { OrderList } from "@/components/admin/order-list";
@@ -15,20 +16,77 @@ type AdminDashboardProps = {
 };
 
 export function AdminDashboard({ orders }: AdminDashboardProps) {
-  const router = useRouter();
+  const [liveOrders, setLiveOrders] = useState(orders);
   const [soundTick, setSoundTick] = useState(0);
+  const [latestAlertPatient, setLatestAlertPatient] = useState("");
+  const liveOrdersRef = useRef(orders);
+
+  useEffect(() => {
+    setLiveOrders(orders);
+  }, [orders]);
+
+  useEffect(() => {
+    liveOrdersRef.current = liveOrders;
+  }, [liveOrders]);
+
+  async function refreshOrders(playAlert: boolean) {
+    const response = await fetch("/api/admin/orders", { cache: "no-store" });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = (await response.json()) as { orders: OrderListItem[] };
+    const previousOrders = liveOrdersRef.current;
+
+    setLiveOrders(data.orders);
+
+    if (!playAlert) {
+      return;
+    }
+
+    const previousIds = new Set(previousOrders.map((order) => order.id));
+    const latestNewOrder = data.orders.find(
+      (order) => order.status === "novo" && !previousIds.has(order.id),
+    );
+
+    if (latestNewOrder) {
+      setLatestAlertPatient(latestNewOrder.patientName);
+      setSoundTick((value) => value + 1);
+    }
+  }
+
+  function markOrderAsDelivered(orderId: string) {
+    startTransition(() => {
+      setLiveOrders((currentOrders) =>
+        currentOrders
+          .map((order) =>
+            order.id === orderId
+              ? {
+                  ...order,
+                  status: "entregue" as const,
+                  deliveredAt: new Date().toISOString(),
+                }
+              : order,
+          )
+          .sort((left, right) => Number(left.status === "entregue") - Number(right.status === "entregue")),
+      );
+    });
+
+    void refreshOrders(false);
+  }
 
   useOrdersRealtime({
     onOrderInserted() {
-      setSoundTick((value) => value + 1);
-      router.refresh();
+      void refreshOrders(true);
     },
     onOrderUpdated() {
-      router.refresh();
+      void refreshOrders(false);
     },
   });
 
-  const newOrders = orders.filter((order) => order.status === "novo").length;
+  const newOrders = liveOrders.filter((order) => order.status === "novo");
+  const deliveredOrders = liveOrders.filter((order) => order.status === "entregue");
 
   return (
     <main className="min-h-screen px-4 py-5 text-ink sm:px-6">
@@ -42,11 +100,11 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="glass-panel rounded-[1.6rem] px-4 py-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Novos</p>
-                <p className="mt-2 text-3xl font-semibold text-[#8f562f]">{newOrders}</p>
+                <p className="mt-2 text-3xl font-semibold text-[#8f562f]">{newOrders.length}</p>
               </div>
               <div className="glass-panel rounded-[1.6rem] px-4 py-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Total</p>
-                <p className="mt-2 text-3xl font-semibold text-[#5a3a28]">{orders.length}</p>
+                <p className="mt-2 text-3xl font-semibold text-[#5a3a28]">{liveOrders.length}</p>
               </div>
               <div className="glass-panel rounded-[1.6rem] px-4 py-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Tela</p>
@@ -55,22 +113,59 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
             </div>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             <Link
               href="/admin/inventory"
-              className="glass-button-secondary inline-flex rounded-full px-4 py-2.5 text-sm font-medium text-[#9a603a]"
+              className="glass-button-primary inline-flex rounded-full px-4 py-2.5 text-sm font-medium text-white"
             >
               Abrir mini estoque
             </Link>
+            <AdminAlertsToggle />
           </div>
         </header>
 
-        <section className="mt-6">
-          <OrderList orders={orders} />
+        <section className="mt-6 space-y-5">
+          <div className="space-y-3">
+            <div className="px-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8f562f]">
+                Pedidos novos
+              </p>
+            </div>
+            <OrderList
+              orders={newOrders}
+              emptyTitle="Nenhum pedido novo"
+              emptyDescription="Assim que um paciente finalizar o pedido pelo celular, ele aparece aqui automaticamente."
+              onDelivered={markOrderAsDelivered}
+            />
+          </div>
+
+          <details className="glass-shell rounded-[2.4rem] p-4" open={deliveredOrders.length > 0}>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-2 py-1">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8f562f]">
+                  Historico
+                </p>
+                <p className="mt-1 text-sm text-ink/55">
+                  Pedidos entregues ficam recolhidos aqui embaixo.
+                </p>
+              </div>
+              <div className="glass-chip rounded-full px-3 py-1 text-sm font-medium text-[#8f4c24]">
+                {deliveredOrders.length}
+              </div>
+            </summary>
+
+            <div className="mt-4">
+              <OrderList
+                orders={deliveredOrders}
+                emptyTitle="Historico vazio"
+                emptyDescription="Assim que um pedido for marcado como entregue, ele sai da parte principal e aparece aqui."
+              />
+            </div>
+          </details>
         </section>
       </div>
 
-      <NewOrderSound tick={soundTick} />
+      <NewOrderSound tick={soundTick} patientName={latestAlertPatient} />
     </main>
   );
 }

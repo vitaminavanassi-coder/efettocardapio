@@ -8,9 +8,10 @@ import type { OrderListItem } from "@/lib/orders";
 
 type OrderCardProps = {
   order: OrderListItem;
+  onDelivered?: (orderId: string) => void;
 };
 
-export function OrderCard({ order }: OrderCardProps) {
+export function OrderCard({ order, onDelivered }: OrderCardProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isNew = order.status === "novo";
 
@@ -18,10 +19,15 @@ export function OrderCard({ order }: OrderCardProps) {
     setIsSubmitting(true);
 
     try {
-      await fetch(`/api/orders/${order.id}/deliver`, {
+      const response = await fetch(`/api/orders/${order.id}/deliver`, {
         method: "POST",
       });
-      window.location.reload();
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel atualizar o pedido.");
+      }
+
+      onDelivered?.(order.id);
     } finally {
       setIsSubmitting(false);
     }
@@ -82,13 +88,21 @@ export function OrderCard({ order }: OrderCardProps) {
         )}
       </div>
 
-      <div className="mt-5">
-        <OrderStatusButton
-          disabled={!isNew || isSubmitting}
-          loading={isSubmitting}
-          onClick={markAsDelivered}
-        />
-      </div>
+      {isNew ? (
+        <div className="mt-5">
+          <OrderStatusButton
+            disabled={isSubmitting}
+            loading={isSubmitting}
+            onClick={markAsDelivered}
+          />
+        </div>
+      ) : (
+        <div className="mt-5">
+          <div className="glass-chip inline-flex rounded-full px-4 py-2 text-sm font-medium text-[#8f6a54]">
+            Pedido no historico
+          </div>
+        </div>
+      )}
     </article>
   );
 }
