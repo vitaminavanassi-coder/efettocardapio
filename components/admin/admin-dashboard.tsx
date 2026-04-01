@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -60,6 +61,15 @@ export function AdminDashboard({ orders }: AdminDashboardProps) {
                 <p className="mt-2 text-lg font-semibold">/admin</p>
               </div>
             </div>
+          </div>
+
+          <div className="mt-5">
+            <Link
+              href="/admin/inventory"
+              className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white"
+            >
+              Abrir mini estoque
+            </Link>
           </div>
         </header>
 
