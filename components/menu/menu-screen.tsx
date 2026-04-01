@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CartSheet } from "@/components/menu/cart-sheet";
 import { CategoryTabs } from "@/components/menu/category-tabs";
 import { ItemCard } from "@/components/menu/item-card";
+import { OrderSuccessState } from "@/components/menu/order-success-state";
 import { PatientNameForm } from "@/components/menu/patient-name-form";
 
 export type MenuItem = {
@@ -29,6 +30,8 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
   const [activeCategory, setActiveCategory] = useState(categories[0] ?? "");
   const [patientName, setPatientName] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const visibleItems = activeCategory
     ? items.filter((item) => item.category === activeCategory)
@@ -60,6 +63,41 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
+  async function submitCart() {
+    if (patientName.trim().length < 2 || totalItems === 0 || isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          patientName: patientName.trim(),
+          items: cart.map((item) => ({
+            itemId: item.id,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel enviar o pedido.");
+      }
+
+      setCart([]);
+      setShowSuccess(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(232,122,93,0.18),_transparent_32%),linear-gradient(180deg,#fffdf8_0%,#f4efe5_100%)] pb-40 text-ink">
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-4 sm:px-5">
@@ -86,6 +124,8 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
         <div className="mt-5 space-y-5">
           <PatientNameForm value={patientName} onChange={setPatientName} />
 
+          {showSuccess ? <OrderSuccessState patientName={patientName} /> : null}
+
           <CategoryTabs
             categories={categories}
             activeCategory={activeCategory}
@@ -104,8 +144,10 @@ export function MenuScreen({ categories, items }: MenuScreenProps) {
         items={cart}
         patientName={patientName}
         totalItems={totalItems}
+        isSubmitting={isSubmitting}
         onAdd={addItem}
         onRemove={removeItem}
+        onSubmit={submitCart}
       />
     </main>
   );

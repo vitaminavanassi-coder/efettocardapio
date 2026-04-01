@@ -9,16 +9,20 @@ type CartSheetProps = {
   items: CartItem[];
   patientName: string;
   totalItems: number;
+  isSubmitting: boolean;
   onAdd: (item: MenuItem) => void;
   onRemove: (itemId: string) => void;
+  onSubmit: () => void;
 };
 
 export function CartSheet({
   items,
   patientName,
   totalItems,
+  isSubmitting,
   onAdd,
   onRemove,
+  onSubmit,
 }: CartSheetProps) {
   const canSubmit = patientName.trim().length >= 2 && totalItems > 0;
 
@@ -77,7 +81,11 @@ export function CartSheet({
         </div>
 
         <div className="mt-4">
-          <OrderSubmitButton disabled={!canSubmit} />
+          <OrderSubmitButton
+            disabled={!canSubmit}
+            loading={isSubmitting}
+            onClick={onSubmit}
+          />
         </div>
       </div>
     </aside>
