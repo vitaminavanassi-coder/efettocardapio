@@ -1,4 +1,8 @@
+import Image from "next/image";
+import { useState } from "react";
+
 import type { MenuItem } from "@/components/menu/menu-screen";
+import { getProductImagePath } from "@/lib/product-images";
 
 type ItemCardProps = {
   item: MenuItem;
@@ -6,11 +10,26 @@ type ItemCardProps = {
 };
 
 export function ItemCard({ item, onAdd }: ItemCardProps) {
+  const imagePath = getProductImagePath(item.slug);
+  const [imageVisible, setImageVisible] = useState(Boolean(imagePath));
+
   return (
     <article className="glass-panel rounded-[1.8rem] p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(191,133,84,0.18)]">
       <div className="flex gap-3.5">
-        <div className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(255,207,175,0.94),rgba(255,174,120,0.94))] text-center text-[1.75rem] font-semibold uppercase text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_18px_30px_rgba(255,166,107,0.2)]">
-          <span className="max-w-10">{item.category.slice(0, 2)}</span>
+        <div className="relative flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(255,207,175,0.94),rgba(255,174,120,0.94))] text-center text-[1.75rem] font-semibold uppercase text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_18px_30px_rgba(255,166,107,0.2)]">
+          {imagePath && imageVisible ? (
+            <Image
+              src={imagePath}
+              alt={item.name}
+              fill
+              sizes="72px"
+              className="object-cover"
+              onError={() => setImageVisible(false)}
+            />
+          ) : null}
+          <span className={`max-w-10 ${imagePath && imageVisible ? "hidden" : ""}`}>
+            {item.category.slice(0, 2)}
+          </span>
         </div>
 
         <div className="min-w-0 flex-1">
