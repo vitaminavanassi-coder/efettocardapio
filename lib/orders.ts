@@ -1,4 +1,5 @@
 import { decrementInventory } from "@/lib/inventory";
+import { getMenuDisplayName } from "@/lib/menu-display-names";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { CreateOrderInput } from "@/lib/validators/order";
 
@@ -34,7 +35,7 @@ export async function createOrder(input: CreateOrderInput) {
 
   const { data: menuItems, error: itemsError } = await supabase
     .from("items")
-    .select("id, name")
+    .select("id, slug, name")
     .in(
       "id",
       input.items.map((item) => item.itemId),
@@ -44,7 +45,9 @@ export async function createOrder(input: CreateOrderInput) {
     throw new Error(`Failed to load ordered items: ${itemsError.message}`);
   }
 
-  const snapshotById = new Map(menuItems.map((item) => [item.id, item.name]));
+  const snapshotById = new Map(
+    menuItems.map((item) => [item.id, getMenuDisplayName(item.slug, item.name)]),
+  );
   const orderItems = input.items.map((item) => ({
     order_id: order.id,
     item_id: item.itemId,

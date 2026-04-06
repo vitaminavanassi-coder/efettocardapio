@@ -1,4 +1,5 @@
 import { isVisibleMenuSlug } from "@/lib/hidden-menu-slugs";
+import { getMenuDisplayName } from "@/lib/menu-display-names";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type MenuListItem = {
@@ -32,7 +33,7 @@ export async function listMenuItems() {
       return {
         id: item.id,
         slug: item.slug,
-        name: item.name,
+        name: getMenuDisplayName(item.slug, item.name),
         category: item.category,
         description: item.description ?? "",
         available: !unavailableManual && quantityCurrent > 0,

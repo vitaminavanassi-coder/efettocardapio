@@ -209,7 +209,7 @@ export const initialCatalog: CatalogItemSeed[] = [
   },
   {
     slug: "peppermint-celestial",
-    name: "Peppermint - marca Celestial",
+    name: "Cha Peppermint",
     category: "Chas",
     description: "Cha peppermint da marca Celestial.",
     lowStockThreshold: 4,
@@ -217,7 +217,7 @@ export const initialCatalog: CatalogItemSeed[] = [
   },
   {
     slug: "true-blueberry-celestial",
-    name: "True blueberry - marca Celestial",
+    name: "Cha True Blueberry",
     category: "Chas",
     description: "Cha true blueberry da marca Celestial.",
     lowStockThreshold: 4,

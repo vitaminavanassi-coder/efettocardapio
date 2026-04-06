@@ -1,4 +1,5 @@
 import { isVisibleMenuSlug } from "@/lib/hidden-menu-slugs";
+import { getMenuDisplayName } from "@/lib/menu-display-names";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type InventoryListItem = {
@@ -28,7 +29,7 @@ export async function listInventoryItems() {
     .map((entry) => ({
       itemId: entry.items.id,
       slug: entry.items.slug,
-      name: entry.items.name,
+      name: getMenuDisplayName(entry.items.slug, entry.items.name),
       category: entry.items.category,
       quantityCurrent: entry.quantity_current,
       alertThreshold: entry.alert_threshold,

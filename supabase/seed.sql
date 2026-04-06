@@ -24,8 +24,8 @@ values
   ('ao-leite', 'Ao leite', 'Chocolate classico ao leite.', 'Chocolates', true, 25),
   ('balas', 'Balas', 'Balas embaladas para atendimento rapido.', 'Snacks', true, 26),
   ('chas', 'Chas', 'Selecao de chas da clinica.', 'Chas', true, 27),
-  ('peppermint-celestial', 'Peppermint - marca Celestial', 'Cha peppermint da marca Celestial.', 'Chas', true, 28),
-  ('true-blueberry-celestial', 'True blueberry - marca Celestial', 'Cha true blueberry da marca Celestial.', 'Chas', true, 29),
+  ('peppermint-celestial', 'Cha Peppermint', 'Cha peppermint da marca Celestial.', 'Chas', true, 28),
+  ('true-blueberry-celestial', 'Cha True Blueberry', 'Cha true blueberry da marca Celestial.', 'Chas', true, 29),
   ('barra-cereal-avela-chocolate', 'Barra de cereal avela com chocolate', 'Barra de cereal com avela e chocolate.', 'Snacks', true, 31),
   ('barra-cereal-castanha-caju', 'Barra de cereal castanha de caju', 'Barra de cereal com castanha de caju.', 'Snacks', true, 32)
 on conflict (slug) do update set
