@@ -12,5 +12,6 @@ describe("initialCatalog", () => {
     expect(slugs).not.toContain("dolce-gusto");
     expect(slugs).not.toContain("chocolate");
     expect(slugs).not.toContain("cereal");
+    expect(slugs).not.toContain("leite-creme");
   });
 });

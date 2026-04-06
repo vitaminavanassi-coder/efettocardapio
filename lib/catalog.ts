@@ -176,14 +176,6 @@ export const initialCatalog: CatalogItemSeed[] = [
     startingInventory: 16,
   },
   {
-    slug: "leite-creme",
-    name: "Leite-creme",
-    category: "Chocolates",
-    description: "Chocolate com recheio de leite-creme.",
-    lowStockThreshold: 4,
-    startingInventory: 10,
-  },
-  {
     slug: "pistache",
     name: "Pistache",
     category: "Chocolates",

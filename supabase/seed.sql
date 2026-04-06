@@ -20,7 +20,6 @@ values
   ('chocolate-menta', 'Chocolate menta', 'Chocolate com toque refrescante de menta.', 'Chocolates', true, 20),
   ('chocolate-70-cacau', 'Chocolate 70% cacau', 'Chocolate intenso com 70% cacau.', 'Chocolates', true, 21),
   ('bombons', 'Bombons', 'Selecao de bombons para servir.', 'Chocolates', true, 22),
-  ('leite-creme', 'Leite-creme', 'Chocolate com recheio de leite-creme.', 'Chocolates', true, 23),
   ('pistache', 'Pistache', 'Chocolate sabor pistache.', 'Chocolates', true, 24),
   ('ao-leite', 'Ao leite', 'Chocolate classico ao leite.', 'Chocolates', true, 25),
   ('balas', 'Balas', 'Balas embaladas para atendimento rapido.', 'Snacks', true, 26),
