@@ -88,14 +88,6 @@ export const initialCatalog: CatalogItemSeed[] = [
     startingInventory: 8,
   },
   {
-    slug: "dolce-gusto",
-    name: "Dolce Gusto",
-    category: "Cafes",
-    description: "Capsula especial da linha Dolce Gusto.",
-    lowStockThreshold: 4,
-    startingInventory: 14,
-  },
-  {
     slug: "chocolate-quente",
     name: "Chocolate quente",
     category: "Cafes",
@@ -142,14 +134,6 @@ export const initialCatalog: CatalogItemSeed[] = [
     description: "Cafe intenso e encorpado.",
     lowStockThreshold: 4,
     startingInventory: 16,
-  },
-  {
-    slug: "chocolate",
-    name: "Chocolate",
-    category: "Chocolates",
-    description: "Chocolate em porcao individual.",
-    lowStockThreshold: 5,
-    startingInventory: 14,
   },
   {
     slug: "lacreme-ao-leite",
@@ -246,14 +230,6 @@ export const initialCatalog: CatalogItemSeed[] = [
     description: "Cha true blueberry da marca Celestial.",
     lowStockThreshold: 4,
     startingInventory: 10,
-  },
-  {
-    slug: "cereal",
-    name: "Cereal",
-    category: "Snacks",
-    description: "Opcao leve para lanche rapido.",
-    lowStockThreshold: 4,
-    startingInventory: 12,
   },
   {
     slug: "barra-cereal-avela-chocolate",

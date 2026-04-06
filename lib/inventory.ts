@@ -1,3 +1,4 @@
+import { isVisibleMenuSlug } from "@/lib/hidden-menu-slugs";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type InventoryListItem = {
@@ -22,17 +23,19 @@ export async function listInventoryItems() {
     throw new Error(`Failed to list inventory: ${error.message}`);
   }
 
-  return (data ?? []).map((entry) => ({
-    itemId: entry.items.id,
-    slug: entry.items.slug,
-    name: entry.items.name,
-    category: entry.items.category,
-    quantityCurrent: entry.quantity_current,
-    alertThreshold: entry.alert_threshold,
-    unavailableManual: entry.unavailable_manual,
-    isLowStock:
-      entry.unavailable_manual || entry.quantity_current <= entry.alert_threshold,
-  })) satisfies InventoryListItem[];
+  return (data ?? [])
+    .filter((entry) => isVisibleMenuSlug(entry.items.slug))
+    .map((entry) => ({
+      itemId: entry.items.id,
+      slug: entry.items.slug,
+      name: entry.items.name,
+      category: entry.items.category,
+      quantityCurrent: entry.quantity_current,
+      alertThreshold: entry.alert_threshold,
+      unavailableManual: entry.unavailable_manual,
+      isLowStock:
+        entry.unavailable_manual || entry.quantity_current <= entry.alert_threshold,
+    })) satisfies InventoryListItem[];
 }
 
 export async function updateInventoryItem(

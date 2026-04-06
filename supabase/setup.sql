@@ -81,14 +81,12 @@ values
   ('agua-saborizada-bergamota-capim-limao', 'Agua saborizada bergamota e capim limao', 'Agua saborizada aromatica e leve.', 'Aguas e sucos', true, 7),
   ('agua-saborizada-pessego', 'Agua saborizada pessego', 'Agua saborizada com notas suaves de pessego.', 'Aguas e sucos', true, 8),
   ('agua-saborizada-frutas-vermelhas', 'Agua saborizada frutas vermelhas', 'Agua saborizada frutada e delicada.', 'Aguas e sucos', true, 9),
-  ('dolce-gusto', 'Dolce Gusto', 'Capsula especial da linha Dolce Gusto.', 'Cafes', true, 10),
   ('chocolate-quente', 'Chocolate quente', 'Bebida cremosa e reconfortante.', 'Cafes', true, 11),
   ('cappuccino', 'Cappuccino', 'Cafe cremoso com espuma suave.', 'Cafes', true, 12),
   ('cafe-au-lait', 'Cafe au lait', 'Cafe com leite em estilo classico.', 'Cafes', true, 13),
   ('mochaccino-canela', 'Mochaccino canela', 'Mochaccino com toque de canela.', 'Cafes', true, 14),
   ('mochaccino-avela', 'Mochaccino avela', 'Mochaccino com sabor de avela.', 'Cafes', true, 15),
   ('expresso', 'Expresso', 'Cafe intenso e encorpado.', 'Cafes', true, 16),
-  ('chocolate', 'Chocolate', 'Chocolate em porcao individual.', 'Chocolates', true, 17),
   ('lacreme-ao-leite', 'Lacreme ao leite', 'Chocolate LaCreme ao leite.', 'Chocolates', true, 18),
   ('lacreme-branco', 'Lacreme branco', 'Chocolate LaCreme branco.', 'Chocolates', true, 19),
   ('chocolate-menta', 'Chocolate menta', 'Chocolate com toque refrescante de menta.', 'Chocolates', true, 20),
@@ -101,7 +99,6 @@ values
   ('chas', 'Chas', 'Selecao de chas da clinica.', 'Chas', true, 27),
   ('peppermint-celestial', 'Peppermint - marca Celestial', 'Cha peppermint da marca Celestial.', 'Chas', true, 28),
   ('true-blueberry-celestial', 'True blueberry - marca Celestial', 'Cha true blueberry da marca Celestial.', 'Chas', true, 29),
-  ('cereal', 'Cereal', 'Opcao leve para lanche rapido.', 'Snacks', true, 30),
   ('barra-cereal-avela-chocolate', 'Barra de cereal avela com chocolate', 'Barra de cereal com avela e chocolate.', 'Snacks', true, 31),
   ('barra-cereal-castanha-caju', 'Barra de cereal castanha de caju', 'Barra de cereal com castanha de caju.', 'Snacks', true, 32)
 on conflict (slug) do update set
